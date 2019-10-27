@@ -6,4 +6,9 @@
 
 # here comes your solution
 # e.g.
-cut -d' ' -f1 $2 | head -$1 | cat -n
+n="$1"
+file="$2"
+output=$(cut -d' ' -f7 $file | sort | uniq -c |sort -rn | head -1  | cut -d' ' -f5)
+output=$(cut -d' ' -f7,11 $file | grep -Gw "$output"  | grep -vw "-" | cut -d' ' -f2 | sort | uniq -c | sort -rn | head -$n |sed 's/"/ /g')
+num=$(echo "$output" | awk 'begin{sum=0}{sum +=$1}END{print sum}')
+echo "$output" |awk -v c=$num 'BEGIN{n=1}{printf("%d. %s - %s - %0.1f%s\n",n,$2,$1,$1*100/c,"%");n++}'
